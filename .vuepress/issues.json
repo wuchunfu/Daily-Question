@@ -438,7 +438,7 @@
     ],
     "comment": {
       "id": "MDEyOklzc3VlQ29tbWVudDU1MjA5OTE2NQ==",
-      "body": "它一般可以使用第三方库 [clipboard.js](https://github.com/zenorocha/clipboard.js) 来实现，源码很简单，可以读一读\r\n\r\n主要有两个要点\r\n\r\n1. 选中: `Selection API`\r\n1. 复制: `document.execCommand`\r\n\r\n## 选中: Selection API\r\n\r\n选中主要利用了 [Selection API](https://developer.mozilla.org/en-US/docs/Web/API/Selection)\r\n\r\n选中的代码如下\r\n\r\n``` js\r\nconst selection = window.getSelection();\r\nconst range = document.createRange();\r\n\r\nrange.selectNodeContents(element);\r\nselection.removeAllRanges();\r\nselection.addRange(range);\r\n\r\nselectedText = selection.toString();\r\n```\r\n\r\n取消选中的代码如下\r\n\r\n``` js\r\nwindow.getSelection().removeAllRanges();\r\n```\r\n\r\n它有现成的第三方库可以使用: [select.js](https://github.com/zenorocha/select)\r\n\r\n## 复制: execCommand\r\n\r\n复制就比较简单了，`execCommand`\r\n\r\n``` js\r\ndocument.exec('copy')\r\n```",
+      "body": "它一般可以使用第三方库 [clipboard.js](https://github.com/zenorocha/clipboard.js) 来实现，源码很简单，可以读一读\r\n\r\n主要有两个要点\r\n\r\n1. 选中: `Selection API`\r\n1. 复制: `document.execCommand`\r\n\r\n## 选中: Selection API/Range API\r\n\r\n选中主要利用了 [Selection API](https://developer.mozilla.org/en-US/docs/Web/API/Selection) 与 Range API\r\n\r\n选中的代码如下\r\n\r\n``` js\r\nconst selection = window.getSelection();\r\nconst range = document.createRange();\r\n\r\n// RangeAPI: 制造区域\r\nrange.selectNodeContents(element);\r\n\r\n// Selection: 选中区域\r\nselection.addRange(range);\r\n\r\nselectedText = selection.toString();\r\n```\r\n\r\n取消选中的代码如下\r\n\r\n``` js\r\nwindow.getSelection().removeAllRanges();\r\n```\r\n\r\n它有现成的第三方库可以使用: [select.js](https://github.com/zenorocha/select)\r\n\r\n## 复制: execCommand\r\n\r\n复制就比较简单了，`execCommand`\r\n\r\n``` js\r\ndocument.exec('copy')\r\n```",
       "reactions": {
         "totalCount": 0
       },
@@ -3210,15 +3210,12 @@
       }
     ],
     "comment": {
-      "id": "MDEyOklzc3VlQ29tbWVudDU2OTIxNzAyNg==",
-      "body": "> ``` js\r\n> const obj = {\r\n>   a: 3,\r\n>   b: 4,\r\n>   c: null,\r\n>   d: undefined,\r\n>   get e () {}\r\n> }\r\n> ```\r\n> \r\n> console.log(JSON.stringify(obj))\r\n>\r\n> 输出什么？\r\n\r\n``` js\r\n{\"a\":3,\"b\":4,\"c\":null}\r\n```\r\n\r\n对其中的 `undefined`，`function` 将在 `JSON.stringify` 时会忽略掉",
+      "id": "MDEyOklzc3VlQ29tbWVudDY2OTI5MTA4OQ==",
+      "body": "> > ```js\r\n> > const obj = {\r\n> >   a: 3,\r\n> >   b: 4,\r\n> >   c: null,\r\n> >   d: undefined,\r\n> >   get e () {}\r\n> > }\r\n> > ```\r\n> > \r\n> > \r\n> > console.log(JSON.stringify(obj))\r\n> > 输出什么？\r\n> \r\n> ```js\r\n> {\"a\":3,\"b\":4,\"c\":null}\r\n> ```\r\n> \r\n> 对其中的 `undefined`，`function` 将在 `JSON.stringify` 时会忽略掉\r\n\r\n`const obj` 中的 `get e () {}` 并不是函数，此处应该是重写了 `obj.e` 的 `get` 方法，因为 `get` 方法未定义返回值，因此在执行 `JSON.stringify` 时，执行 `obj.e` 的 `get` 方法，返回 `undefined`，因此被忽略\r\n\r\n让我们更改 `get` 方法的返回值\r\n![image](https://user-images.githubusercontent.com/57755075/89437679-76f57080-d77a-11ea-9208-2e80d6505d68.png)\r\n\r\n看到 666 了吧？",
       "reactions": {
-        "totalCount": 0
+        "totalCount": 1
       },
-      "author": {
-        "login": "shfshanyue",
-        "url": "https://github.com/shfshanyue"
-      }
+      "author": null
     }
   },
   {
@@ -4826,7 +4823,17 @@
         "name": "js"
       }
     ],
-    "comment": ""
+    "comment": {
+      "id": "MDEyOklzc3VlQ29tbWVudDc5MzUyMTk4Mw==",
+      "body": "```\r\nvar path = 'https://static-zh.wxb.com.cn/customer/form/2020/11/1758696796d.jpg'\r\nfunction clipImage(path){\r\n    const canvas = document.createElement('canvas')\r\n    canvas.width = 200\r\n    canvas.height = 100\r\n    const ctx = canvas.getContext('2d')\r\n    const img = document.createElement('img')\r\n    img.src = path\r\n    img.setAttribute(\"crossOrigin\",'Anonymous')\r\n    img.onload = function (){\r\n        ctx.drawImage(this,0,0,200,100)\r\n        console.log(canvas.toDataURL())\r\n    }\r\n}\r\nclipImage(path)\r\n```",
+      "reactions": {
+        "totalCount": 0
+      },
+      "author": {
+        "login": "guanwanxiao",
+        "url": "https://github.com/guanwanxiao"
+      }
+    }
   },
   {
     "id": "MDU6SXNzdWU1NzcyNTQwMTQ=",
@@ -9374,7 +9381,7 @@
   {
     "id": "MDU6SXNzdWU3ODY1MzE3ODg=",
     "number": 472,
-    "title": "【Q464】什么是重排重绘，如何避免",
+    "title": "【Q464】什么是重排重绘，如何减少重拍重绘",
     "body": "",
     "labels": [
       {
@@ -9384,7 +9391,7 @@
     ],
     "comment": {
       "id": "MDEyOklzc3VlQ29tbWVudDc2MDY2MDE4Nw==",
-      "body": "重排和重绘是关键渲染路径中的两步，可以参考另一个问题: [什么是关键渲染路径](https://q.shanyue.tech/fe/%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%8C%96/391.html)\r\n\r\n+ 重排(Reflow)：元素的位置发生变动时发生重排，也叫回流。此时在关键渲染路径中的 Layout 阶段，计算每一个元素在设备视口内的确切位置和大小。当一个元素位置发生变化时，其父元素及其后边的元素位置都可能发生变化，代价极高\r\n+ 重绘(Repaint): 元素的样式发生变动，但是位置没有改变。此时在关键渲染路径中的 Paint 阶段，将渲染树中的每个节点转换成屏幕上的实际像素，这一步通常称为绘制或栅格化\r\n\r\n另外，重排必定会造成重绘。以下是避免过多重拍重绘的方法\r\n\r\n1. 使用 `DocumentFragment` 进行 DOM 操作，不过现在原生操作很少也基本上用不到\r\n\r\n\r\n",
+      "body": "重排和重绘是关键渲染路径中的两步，可以参考另一个问题: [什么是关键渲染路径](https://q.shanyue.tech/fe/%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%8C%96/391.html)\r\n\r\n+ 重排(Reflow)：元素的位置发生变动时发生重排，也叫回流。此时在关键渲染路径中的 Layout 阶段，计算每一个元素在设备视口内的确切位置和大小。当一个元素位置发生变化时，其父元素及其后边的元素位置都可能发生变化，代价极高\r\n    ![](https://q.shanyue.tech/assets/layout.png)\r\n\r\n+ 重绘(Repaint): 元素的样式发生变动，但是位置没有改变。此时在关键渲染路径中的 Paint 阶段，将渲染树中的每个节点转换成屏幕上的实际像素，这一步通常称为绘制或栅格化\r\n    ![](https://q.shanyue.tech/assets/paint.png)\r\n\r\n另外，重排必定会造成重绘。以下是避免过多重拍重绘的方法\r\n\r\n1. 使用 `DocumentFragment` 进行 DOM 操作，不过现在原生操作很少也基本上用不到\r\n2. CSS 样式尽量批量修改\r\n3. 避免使用 table 布局\r\n4. 为元素提前设置好高宽，不因多次渲染改变位置\r\n\r\n\r\n",
       "reactions": {
         "totalCount": 0
       },
@@ -9441,7 +9448,17 @@
         "name": "前端工程化"
       }
     ],
-    "comment": ""
+    "comment": {
+      "id": "MDEyOklzc3VlQ29tbWVudDc5MTQwNDU5MA==",
+      "body": "## cjs (commonjs)\r\n\r\n`commonjs` 是 Node 中的模块规范，通过 `require` 及 `exports` 进行导入导出 (进一步延伸的话，`module.exports` 属于 `commonjs2`)\r\n\r\n同时，webpack 也对 `cjs` 模块得以解析，因此 `cjs` 模块可以运行在 node 环境及 webpack 环境下的，但不能在浏览器中*直接*使用。但如果你写前端项目在 webpack 中，也可以理解为它在浏览器和 Node 都支持。\r\n\r\n比如，著名的全球下载量前十10的模块 [ms](https://npm.devtool.tech/ms) 只支持 `commonjs`，但并不影响它在前端项目中使用(通过webpack)，但是你想通过 cdn 的方式直接在浏览器中引入，估计就会出问题了\r\n\r\n``` js\r\n// sum.js\r\nexports.sum = (x, y) => x + y\r\n\r\n// index.js\r\nconst { sum } = require('./sum.js')\r\n```\r\n\r\n由于 `cjs` 为动态加载，可直接 `require` 一个变量\r\n\r\n``` js\r\nrequire(`./${a}`)\r\n```\r\n\r\n## esm (es module)\r\n\r\n`esm` 是 tc39 对于 js 模块的规范，**在 Node 及 浏览器中均会支持**，使用 `export/import` 进行模块导入导出\r\n\r\n``` js\r\n// sum.js\r\nexport const sum = (x, y) => x + y\r\n\r\n// index.js\r\nimport { sum } from './sum'\r\n```\r\n\r\n由于 `esm` 为静态导入，tc39 为动态加载模块定义了 API: `import(module)` 。\r\n\r\nesm 是未来的趋势，目前一些 CDN 厂商，前端构建工具均致力于 cjs 模块向 esm 的转化，比如 `skypack`、 `snowpack`、`vite` 等\r\n\r\n## umd\r\n\r\n一种兼容 `cjs` 与 `amd` 的模块，既可以在 node/webpack 环境中被 `require`，也可以在浏览器中直接用 CDN 被 `script.src` 引入\r\n\r\n``` js\r\n(function (root, factory) {\r\n  if (typeof define === 'function' && define.amd) {\r\n    // AMD\r\n    define(['jquery'], factory);\r\n  } else if (typeof exports === 'object') {\r\n    // CommonJS\r\n    module.exports = factory(require('jquery'));\r\n  } else {\r\n    // 全局变量\r\n    root.returnExports = factory(root.jQuery);\r\n  }\r\n}(this, function ($) {\r\n  // ...\r\n}));\r\n```\r\n",
+      "reactions": {
+        "totalCount": 0
+      },
+      "author": {
+        "login": "shfshanyue",
+        "url": "https://github.com/shfshanyue"
+      }
+    }
   },
   {
     "id": "MDU6SXNzdWU3OTg5MTA1NjY=",
@@ -9637,7 +9654,7 @@
     "id": "MDU6SXNzdWU4MTE2MDMyNTA=",
     "number": 486,
     "title": "【Q478】如何实现容器中子元素三个三列布局，子元素两个则两列布局",
-    "body": "",
+    "body": "及容器中有三个及以上元素，则三列布局\r\n容器只有两个元素，两列布局平分\r\n容器只有一个元素，一列布局全占",
     "labels": [
       {
         "id": "MDU6TGFiZWwxNjUxNDAyMzIw",
@@ -9703,6 +9720,78 @@
         "name": "css"
       }
     ],
+    "comment": {
+      "id": "MDEyOklzc3VlQ29tbWVudDc5MjY4NzQwMg==",
+      "body": "``` css\r\nfont-family: system-ui;\r\n```\r\n\r\n`system-ui` 将会自动选取系统默认字体作为字体，如 [`bootstrap` 的样式规则](https://github.com/twbs/bootstrap/blob/main/scss/_variables.scss#L419)\r\n\r\n``` scss\r\n$font-family-sans-serif: system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", \"Liberation Sans\", sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\" !default;\r\n```",
+      "reactions": {
+        "totalCount": 0
+      },
+      "author": {
+        "login": "shfshanyue",
+        "url": "https://github.com/shfshanyue"
+      }
+    }
+  },
+  {
+    "id": "MDU6SXNzdWU4MjIxOTkzNjU=",
+    "number": 490,
+    "title": "【Q482】现代化前端框架中如何进行调试",
+    "body": "",
+    "labels": [
+      {
+        "id": "MDU6TGFiZWwxNjUxNDAyMzE4",
+        "name": "js"
+      }
+    ],
     "comment": ""
+  },
+  {
+    "id": "MDU6SXNzdWU4MjQyNTE2MTk=",
+    "number": 491,
+    "title": "【Q483】如何使用 redis 计算 wordcount，并计算出现频率最高的词",
+    "body": "",
+    "labels": [
+      {
+        "id": "MDU6TGFiZWwxNjY2OTk3OTM5",
+        "name": "redis"
+      }
+    ],
+    "comment": ""
+  },
+  {
+    "id": "MDU6SXNzdWU4MjUyMjQ2NjE=",
+    "number": 492,
+    "title": "【Q484】express 中间件的原理是什么",
+    "body": "",
+    "labels": [
+      {
+        "id": "MDU6TGFiZWwxNzI2MDg3MTMx",
+        "name": "node"
+      }
+    ],
+    "comment": ""
+  },
+  {
+    "id": "MDU6SXNzdWU4MjU2ODY0OTE=",
+    "number": 493,
+    "title": "【Q485】写 CSS 时如何避免命名样式冲突",
+    "body": "",
+    "labels": [
+      {
+        "id": "MDU6TGFiZWwxNjUxNDAyMzIw",
+        "name": "css"
+      }
+    ],
+    "comment": {
+      "id": "MDEyOklzc3VlQ29tbWVudDc5Mzg4MTM3MA==",
+      "body": "\r\n## 1. BEM 式: `.home-page .home-page-btn`\r\n\r\n``` css\r\n.home-page {\r\n  .home-page-btn {}\r\n}\r\n```\r\n\r\nBEM 有一个缺点，就是有些太长，可适当简化，只包裹该页面组件的根类名，但有可能增加样式冲突的风险\r\n\r\n``` css\r\n.home-page {\r\n  .btn {}\r\n}\r\n```\r\n\r\n## 2. CSS Scoped\r\n\r\n`scoped css` 会对当前组件(scope)下所有元素生成唯一的属性或类名，对所有 CSS 规则将携带唯一属性实现作用域的命名保护\r\n\r\n``` css\r\n// 手动写\r\n.btn {}\r\n\r\n// 编译后\r\n.btn .jsx-1287234 {}\r\n\r\n```\r\n\r\n![css scoped demo](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2c0676b0f8cc4f40b925dcb983778dd8~tplv-k3u1fbpfcp-watermark.image)\r\n\r\n## 3. CSS Module\r\n\r\n+ [css-modules repo](https://github.com/css-modules/css-modules)\r\n+ [css-modules demo](https://css-modules.github.io/webpack-demo/)\r\n\r\n`module css` 会对类名进行 hash 化\r\n\r\n![css modules demo](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/072649f56f8f4f80afa226879b94a6bf~tplv-k3u1fbpfcp-watermark.image)\r\n",
+      "reactions": {
+        "totalCount": 0
+      },
+      "author": {
+        "login": "shfshanyue",
+        "url": "https://github.com/shfshanyue"
+      }
+    }
   }
 ]
